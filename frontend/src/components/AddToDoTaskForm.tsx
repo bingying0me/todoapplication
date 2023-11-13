@@ -1,92 +1,110 @@
 // AddToDoTaskForm.tsx
 import React, { useState, useEffect } from "react";
+import { Form, Container } from "react-bootstrap";
 import { ToDoTaskType } from "../types/todotask.types";
+import {
+  addTodotask,
+  getTodotasks,
+  getTodotask,
+  updateTodotask,
+  deleteTodotask,
+} from "../api/todotaskApi";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import "../style/AddToDoTaskForm.css"; // Import the CSS file
 
 const AddToDoTaskForm = () => {
-  // State for the currently entered task and the list of tasks
-  const [toDoTask, setToDoTask] = useState<ToDoTaskType>({ title: "" });
   const [toDoTasks, setToDoTasks] = useState<ToDoTaskType[]>([]);
-  
-  // State to track the index of the task being edited
-  const [editingTaskIndex, setEditingTaskIndex] = useState<number | null>(null);
 
-  // Effect to retrieve tasks from local storage on component mount
+  const formik = useFormik({
+    initialValues: {
+      _id: "",
+      title: "",
+    },
+    validationSchema: Yup.object({
+      title: Yup.string().required("Required"),
+    }),
+    onSubmit: async (values) => {
+      try {
+        if (values._id) {
+          await updateTodotask(values);
+          console.log("ToDo Task updated:", values);
+        } else {
+          await addTodotask(values);
+          console.log("ToDo Task added:", values);
+        }
+        getItemsList();
+        formik.setValues(formik.initialValues);
+      } catch (error: any) {
+        console.error("Error:", error.message);
+      }
+    },
+  });
+
   useEffect(() => {
-    const storedTasks = JSON.parse(localStorage.getItem("toDoTasks") || "[]");
-    setToDoTasks(storedTasks);
+    getItemsList();
   }, []);
 
-  // Effect to save tasks to local storage whenever tasks are updated
-  useEffect(() => {
-    localStorage.setItem("toDoTasks", JSON.stringify(toDoTasks));
-  }, [toDoTasks]);
-
-  // Event handler for input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    // Update the toDoTask state with the new input value
-    setToDoTask({
-      ...toDoTask,
-      [name]: value,
-    });
-  };
-
-  // Event handler for form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (editingTaskIndex !== null) {
-      // If editingTaskIndex is not null, update the existing task
-      const updatedTasks = toDoTasks.map((task, index) =>
-        index === editingTaskIndex ? { ...task, ...toDoTask } : task
-      );
-      setToDoTasks(updatedTasks);
-      setEditingTaskIndex(null); // Reset editingTaskIndex
-    } else {
-      // Otherwise, add a new task
-      const updatedTask = { ...toDoTask };
-      setToDoTasks([...toDoTasks, updatedTask]);
+  const getItemsList = async () => {
+    try {
+      const response = await getTodotasks();
+      setToDoTasks(response);
+      console.log("ToDo Task List:", response);
+    } catch (error: any) {
+      console.log("Error getting ToDo Task List:", error.message);
     }
-
-    setToDoTask({ title: "" }); // Clear the form after submitting
   };
 
-  // Event handler for updating a task
-  const handleUpdate = (index: number) => {
-    // Set the toDoTask state to the task being updated
-    setToDoTask(toDoTasks[index]);
-    setEditingTaskIndex(index);
+  const handleUpdate = async (id: string) => {
+    try {
+      const response = await getTodotask(id);
+      formik.setValues(response);
+      console.log("ToDo Task:", response);
+    } catch (error: any) {
+      console.error("Error getting ToDo Task:", error.message);
+    }
   };
 
-  // Event handler for deleting a task
-  const handleDelete = (index: number) => {
-    // Remove the task at the specified index
-    const updatedTasks = toDoTasks.filter((task, i) => i !== index);
-    setToDoTasks(updatedTasks);
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteTodotask(id);
+      console.log("ToDo Task deleted:", id);
+      formik.setValues(formik.initialValues);
+      getItemsList();
+    } catch (error: any) {
+      console.error("Error deleting ToDo Task:", error.message);
+    }
   };
 
   return (
-    <div>
+    <>
       <h2>Add To Do Task</h2>
-      {/* Form for adding or updating tasks */}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="title"
-          value={toDoTask.title}
-          onChange={handleChange}
-          placeholder="Title"
-          required
-        />
-        <button type="submit">{editingTaskIndex !== null ? "Update Task" : "Add Task"}</button>
-      </form>
-      {/* Display a message if there are no tasks */}
+      <Container fluid className="container">
+        <Form onSubmit={formik.handleSubmit}>
+          <Form.Group className="form-group">
+            <input
+              type="text"
+              name="title"
+              value={formik.values.title}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="Title"
+              className="input-title"
+              required
+            />
+            <button type="submit" className="submit-button">
+              {formik.values._id ? "Update Task" : "Add Task"}
+            </button>
+          </Form.Group>
+          {formik.touched.title && formik.errors.title ? (
+            <Form.Text className="error-text">{formik.errors.title}</Form.Text>
+          ) : null}
+        </Form>
+      </Container>
       {toDoTasks.length === 0 ? (
         <p>No todos found</p>
       ) : (
-        // Table to display the list of tasks
-        <table>
+        <table className="table">
           <thead>
             <tr>
               <th>Title</th>
@@ -95,23 +113,31 @@ const AddToDoTaskForm = () => {
             </tr>
           </thead>
           <tbody>
-            {/* Map through tasks and display them in the table */}
             {toDoTasks.map((task, index) => (
               <tr key={index}>
                 <td>{task.title}</td>
-                {/* Buttons for updating and deleting tasks */}
                 <td>
-                  <button onClick={() => handleUpdate(index)}>Update Task</button>
+                  <button
+                    onClick={() => handleUpdate(task._id)}
+                    className="update-button"
+                  >
+                    Update Task
+                  </button>
                 </td>
                 <td>
-                  <button onClick={() => handleDelete(index)}>Delete Task</button>
+                  <button
+                    onClick={() => handleDelete(task._id)}
+                    className="delete-button"
+                  >
+                    Delete Task
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
-    </div>
+    </>
   );
 };
 

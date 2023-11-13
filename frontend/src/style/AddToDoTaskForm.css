@@ -1,0 +1,55 @@
+.container {
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .form-group {
+    display: flex;
+    margin-bottom: 15px;
+  }
+  
+  .input-title {
+    flex: 1;
+    margin-right: 10px;
+    padding: 8px;
+  }
+  
+  .submit-button {
+    padding: 8px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .error-text {
+    color: red;
+  }
+  
+  .table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+  }
+  
+  .table th,
+  .table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .update-button,
+  .delete-button {
+    padding: 8px;
+    cursor: pointer;
+  }
+  
+  .update-button {
+    background-color: #28A745;
+    color: white;
+  }
+  
+  .delete-button {
+    background-color: #DC3545;
+    color: white;
+  }
