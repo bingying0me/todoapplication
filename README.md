@@ -1,43 +1,71 @@
-# ToDo List Application
+# ToDo Application
 
-This is a simple ToDo list application built with Vite, React, TypeScript, and local storage for persistent data.
+A simple ToDo application built with [React](https://reactjs.org/) for managing tasks.
 
-## Getting Started
+## Table of Contents
+- [Introduction](#introduction)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Technologies Used](#technologies-used)
 
-### Installation
+## Introduction
+
+Welcome to the ToDo Application! This application provides a user-friendly interface to manage your tasks efficiently. Whether you want to add, update, or delete tasks, this application has got you covered.
+
+## Features
+
+- Add new tasks with a title.
+- Update existing tasks.
+- Delete tasks.
+- View a list of tasks.
+
+## Installation
 
 1. **Clone the repository:**
 
-    ```bash
-    git clone https://github.com/bingying0me/todoapplication.git
-    ```
+   ```bash
+   git clone https://github.com/bingying0me/todoapplication.git
+   ```
+   
+2. **Install dependencies:**
 
-2. **Navigate to the project directory:**
+   ```bash
+   cd todoapplication
+   npm install
+   ```
 
-    ```bash
-    cd todoapplication/frontend
-    ```
+## Usage
 
-3. **Install dependencies:**
+1. **Run the application:**
 
-    ```bash
-    npm install
-    ```
+   - Frontend
+     ```bash
+     cd frontend
+     npm run dev
+     ```
+     This will start the development server. Open your browser and navigate to http://localhost:5173 to use the ToDo Application.
 
-### Running the Application
+   - Backend
+     ```bash
+     cd backend
+     npm start
+     ```
+     This will start the development server. Open your browser and navigate to http://localhost:5000 to use the ToDo Application Server.
+   
+3. **Interact with the application:**
 
-To run the application locally, use the following command:
+   - Add tasks by entering a title and clicking "Add Task."
+   - Update tasks by clicking the "Update Task" button.
+   - Delete tasks by clicking the "Delete Task" button.
+  
+## Technologies Used
 
-```bash
-npm run dev
-```
-
-Visit http://localhost:5173 in your browser.
-
-
-## Functionality
-1. Add, update, and delete tasks.
-2. Tasks persist across browser sessions using local storage.
-
-
-
+   - [React](https://reactjs.org/): A JavaScript library for building user interfaces.
+   - [React Bootstrap](https://react-bootstrap.github.io/): Bootstrap components as React components.
+   - [Formik](https://formik.org/): A form library for React.
+   - [Yup](https://github.com/jquense/yup): A schema validation library.
+   - [Node.js](https://nodejs.org/en): JavaScript runtime.
+   - [Express](https://expressjs.com/): Web application framework for Node.js.
+   - [MongoDB](https://www.mongodb.com/): NoSQL database.
+     
